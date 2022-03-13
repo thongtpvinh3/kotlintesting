@@ -5,26 +5,32 @@ import backend.kotlintesting.repo.EssayAnswerRepository
 import backend.kotlintesting.repo.MultipleAnswerRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.HashOperations
-import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ValueOperations
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class RedisCandidateDoTestCache(@Autowired private val multipleAnswerRepo: MultipleAnswerRepo,
-                                @Autowired private val essayAnswerRepo: EssayAnswerRepository,
-                                private var valueOps: ValueOperations<String, Any>,
-                                private var hashOps: HashOperations<String,Int,Any>) {
+class RedisCandidateDoTestCache(redisTemplate: RedisTemplate<String, Any>) {
 
-    fun RedisCandidateDoTestCache(redisTemplate: RedisTemplate<String, Any>) {
+    private val valueOps: ValueOperations<String?, Any?>
+    private val hashOps: HashOperations<String, Int, TempResultCandidate>
+
+    @Autowired
+    private val multipleAnswerRepo: MultipleAnswerRepo? = null
+
+    @Autowired
+    private val essayAnswerRepo: EssayAnswerRepository? = null
+
+
+    init {
         valueOps = redisTemplate.opsForValue()
         hashOps = redisTemplate.opsForHash()
     }
 
     fun saveMultipleAnswer(temp: TempResultCandidate) {
         try {
-            var idQuestion: Int? = multipleAnswerRepo.getById(temp.idAnswer!!).question!!.id
+            var idQuestion: Int? = multipleAnswerRepo?.getById(temp.idAnswer!!)?.question!!.id
             hashOps.put("ans",idQuestion!!,temp)
         } catch (e: Exception) {
             println("Ko tim thay cau tra loi")
@@ -33,7 +39,7 @@ class RedisCandidateDoTestCache(@Autowired private val multipleAnswerRepo: Multi
 
     fun saveEssayAnswer(temp: TempResultCandidate) {
         try {
-            var idQuestion: Int? = essayAnswerRepo.getById(temp.idAnswer!!).question!!.id
+            var idQuestion: Int? = essayAnswerRepo?.getById(temp.idAnswer!!)?.question!!.id
             hashOps.put("ans",idQuestion!!,temp)
         } catch (e: Exception) {
             println("Ko tim thay cau tra loi")
