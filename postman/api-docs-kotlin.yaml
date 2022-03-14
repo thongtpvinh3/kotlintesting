@@ -1,0 +1,1305 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /staff/updatetest:
+    put:
+      tags:
+      - staff-controller
+      operationId: updateTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Test'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/updatequestion:
+    put:
+      tags:
+      - staff-controller
+      operationId: updateQuestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Question'
+  /staff/updatemcanswer/{idAnswer}:
+    put:
+      tags:
+      - staff-controller
+      operationId: updateMcAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: answer
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: istrue
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MultipleChoiceAnswer'
+  /staff/updateessayanswer/{idAnswer}:
+    put:
+      tags:
+      - staff-controller
+      operationId: updateEssayAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: answer
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EssayAnswer'
+  /staff/setmark/{idCandidate}:
+    put:
+      tags:
+      - staff-controller
+      operationId: setMark
+      parameters:
+      - name: idCandidate
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/reviewmcanswer/{idTest}:
+    put:
+      tags:
+      - staff-controller
+      operationId: reviewMCAnswer
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+  /staff/reviewessay/{idTest}/{idEssay}/{mark}:
+    put:
+      tags:
+      - staff-controller
+      operationId: reviewEssay
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: idEssay
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: mark
+        in: path
+        required: true
+        schema:
+          type: number
+          format: double
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/removemcanswer/{idAnswer}:
+    put:
+      tags:
+      - staff-controller
+      operationId: removeMCAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addtestforcandidate/{idTest}/{idCandidate}:
+    put:
+      tags:
+      - staff-controller
+      operationId: addTestForCandidate
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: idCandidate
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addquestion/{idQuestion}/{idTest}:
+    put:
+      tags:
+      - staff-controller
+      operationId: addQuestionToTest
+      parameters:
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addmcanswer/question/{idQuestion}:
+    put:
+      tags:
+      - staff-controller
+      operationId: addNewMCAnswer
+      parameters:
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultipleChoiceAnswer'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addanswer/{idAnswer}/{idQuestion}:
+    put:
+      tags:
+      - staff-controller
+      operationId: addMcAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/logout:
+    post:
+      tags:
+      - staff-controller
+      operationId: logOut
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /staff/addtest:
+    post:
+      tags:
+      - staff-controller
+      operationId: addTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Test'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addsubject:
+    post:
+      tags:
+      - staff-controller
+      operationId: addSubject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Subject'
+  /staff/addquestion:
+    post:
+      tags:
+      - staff-controller
+      operationId: addQuestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Question'
+  /staff/addlevel:
+    post:
+      tags:
+      - staff-controller
+      operationId: addLevel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Levels'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Levels'
+  /staff/addeanswer/question/{idQuestion}:
+    post:
+      tags:
+      - staff-controller
+      operationId: addEssayAnswer
+      parameters:
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EssayAnswer'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/addcandidate:
+    post:
+      tags:
+      - staff-controller
+      operationId: addCandidate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /jointest:
+    post:
+      tags:
+      - app-controller
+      operationId: joinWithTestCode
+      parameters:
+      - name: code
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /checklogin:
+    post:
+      tags:
+      - app-controller
+      operationId: checkLogin
+      parameters:
+      - name: username
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /candidate/submit/{idTest}:
+    post:
+      tags:
+      - candidate-controller
+      operationId: submitTest
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /candidate/logout:
+    post:
+      tags:
+      - candidate-controller
+      operationId: logOut_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /candidate/doingtest:
+    post:
+      tags:
+      - candidate-controller
+      operationId: cacheAnswer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TempResultCandidate'
+        required: true
+      responses:
+        "200":
+          description: OK
+  /testingonline:
+    get:
+      tags:
+      - app-controller
+      operationId: toWebPage
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /staff/testview:
+    get:
+      tags:
+      - staff-controller
+      operationId: toTestView
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /staff/test:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllTest
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/test/{idTest}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestById
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Test'
+  /staff/test/subject/{idSubject}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestBySubject
+      parameters:
+      - name: idSubject
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/test/name/{name}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/test/level/{level}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestByLevel
+      parameters:
+      - name: level
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/test/done/{isDone}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestByIsDone
+      parameters:
+      - name: isDone
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/test/code/{codeTest}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestByCode
+      parameters:
+      - name: codeTest
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Test'
+  /staff/test/candidate/{idCandidate}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getTestByCandidateId
+      parameters:
+      - name: idCandidate
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+  /staff/subject:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllSubject
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+  /staff/result:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllResult
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TempResultCandidate'
+  /staff/question:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllQuestion
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+  /staff/question/{idQuestion}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getQuestionById
+      parameters:
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Question'
+  /staff/question/type/{idType}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getQuestionByType
+      parameters:
+      - name: idType
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+  /staff/question/test/{idTest}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getQuestionByTest
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+  /staff/question/subject/{idSubject}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getQuestionBySubject
+      parameters:
+      - name: idSubject
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+  /staff/question/level/{idLevel}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getQuestionByLevel
+      parameters:
+      - name: idLevel
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+  /staff/mcanswer:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllMcAnswer
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MultipleChoiceAnswer'
+  /staff/level:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllLevel
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Levels'
+  /staff/home:
+    get:
+      tags:
+      - staff-controller
+      operationId: toStaffHome
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /staff/eanswer:
+    get:
+      tags:
+      - staff-controller
+      operationId: getAllEssayAnswer
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EssayAnswer'
+  /staff/candidate:
+    get:
+      tags:
+      - staff-controller
+      operationId: allCandidate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candidate'
+  /staff/candidate/{idCandidate}:
+    get:
+      tags:
+      - staff-controller
+      operationId: getCandidateById
+      parameters:
+      - name: idCandidate
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Candidate'
+  /staff/candidate/phone/{phone}:
+    get:
+      tags:
+      - staff-controller
+      operationId: findByPhone
+      parameters:
+      - name: phone
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candidate'
+  /staff/candidate/name/{name}:
+    get:
+      tags:
+      - staff-controller
+      operationId: findByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candidate'
+  /staff/candidate/email/{email}:
+    get:
+      tags:
+      - staff-controller
+      operationId: findByEmail
+      parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candidate'
+  /login:
+    get:
+      tags:
+      - app-controller
+      operationId: toStaffLogin
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /candidate/testpage:
+    get:
+      tags:
+      - candidate-controller
+      operationId: toTestPage
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /candidate/test:
+    get:
+      tags:
+      - candidate-controller
+      operationId: toThisTestView
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /staff/deletetest/{idTest}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteTest
+      parameters:
+      - name: idTest
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/deletesubject/{idSubject}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteSubject
+      parameters:
+      - name: idSubject
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/deletequestion/{idQuestion}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteQuestion
+      parameters:
+      - name: idQuestion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/deletemcanswer/{idAnswer}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteMCAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/deletelevel/{idLevel}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteLevel
+      parameters:
+      - name: idLevel
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+  /staff/deletecandidate/{idCandidate}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteCandidate
+      parameters:
+      - name: idCandidate
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+  /staff/delete/essay/{idAnswer}:
+    delete:
+      tags:
+      - staff-controller
+      operationId: deleteEssayAnswer
+      parameters:
+      - name: idAnswer
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+components:
+  schemas:
+    EssayAnswer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        answer:
+          type: string
+        mark:
+          type: number
+          format: double
+    LocalTime:
+      type: object
+      properties:
+        hour:
+          type: integer
+          format: int32
+        minute:
+          type: integer
+          format: int32
+        second:
+          type: integer
+          format: int32
+        nano:
+          type: integer
+          format: int32
+    MultipleChoiceAnswer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        answer:
+          type: string
+        "true":
+          type: integer
+          format: int32
+          writeOnly: true
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        type:
+          type: integer
+          format: int32
+        subject:
+          type: integer
+          format: int32
+        content:
+          type: string
+        level:
+          type: integer
+          format: int32
+        image:
+          type: string
+        multipleChoiceAnswer:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultipleChoiceAnswer'
+        essayAnswer:
+          $ref: '#/components/schemas/EssayAnswer'
+    Test:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        subject:
+          type: integer
+          format: int32
+        level:
+          type: integer
+          format: int32
+        name:
+          type: string
+        dates:
+          type: string
+          format: date-time
+        times:
+          $ref: '#/components/schemas/LocalTime'
+        codeTest:
+          type: string
+        marks:
+          type: number
+          format: double
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        done:
+          type: integer
+          format: int32
+          writeOnly: true
+    ResponseObject:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+    Levels:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+    Candidate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        level:
+          type: integer
+          format: int32
+        phone:
+          type: string
+        email:
+          type: string
+        englishMark:
+          type: number
+          format: double
+        codingMark:
+          type: number
+          format: double
+        knowledgeMark:
+          type: number
+          format: double
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Test'
+        avatar:
+          type: string
+    TempResultCandidate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        idAnswer:
+          type: integer
+          format: int32
+        type:
+          type: integer
+          format: int32
+        answer:
+          type: string
+        idCandidate:
+          type: integer
+          format: int32
