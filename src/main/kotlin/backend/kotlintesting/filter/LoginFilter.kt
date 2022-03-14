@@ -1,6 +1,7 @@
 package backend.kotlintesting.filter
 
-import backend.kotlintesting.model.Staff
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
@@ -13,19 +14,18 @@ class LoginFilter : Filter {
     override fun doFilter(p0: ServletRequest?, p1: ServletResponse?, p2: FilterChain?) {
         val req: HttpServletRequest = p0 as HttpServletRequest
         val resp: HttpServletResponse = p1 as HttpServletResponse
+        var logger: Logger = LoggerFactory.getLogger(LoginFilter::class.java)
 
         val session: HttpSession = req.session
-        val staff: Staff = session.getAttribute("staff") as Staff
-        if (staff == null) {
-            resp.sendRedirect(req.contextPath + "/login")
-            return
+        if (session.getAttribute("staff") == null) {
+            logger.info("No staff in session!!!!")
+            return resp.sendRedirect(req.contextPath+"/login")
         } else {
-            println("thanh cong!")
+            logger.info("Thanh cong!!")
         }
         p2?.doFilter(req,resp)
     }
 
     override fun destroy() {
-        super.destroy()
     }
 }
