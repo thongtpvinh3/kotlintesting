@@ -3,6 +3,8 @@ package backend.kotlintesting.service
 import backend.kotlintesting.model.*
 import backend.kotlintesting.repo.*
 import backend.kotlintesting.responseException.ResponseObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,9 +16,11 @@ import java.time.LocalDateTime
 public class StaffService(@Autowired private val subRepo: SubjectRepository,@Autowired private val levelRepo: LevelRepository,@Autowired private val candiRepo: CandidateRepository, @Autowired private val questionRepo: QuestionRepo, @Autowired private val staffRepo:StaffRepo,
                             @Autowired private val testRepo: TestRepo, @Autowired private val tempResultRepo: TempResultRepo, @Autowired private val multipleAnswerRepo: MultipleAnswerRepo, @Autowired private val essayAnswerRepo: EssayAnswerRepository) {
 
+    var logger: Logger = LoggerFactory.getLogger(StaffService::class.java)
     //-------------------------CANDIDATE-----------------------------------------------
 
     fun findById(idCandidate: Int): Candidate = candiRepo.getById(idCandidate)
+
     fun findCandidateByName(name: String): List<Candidate>? = candiRepo.findByName(name)
     fun findByPhone(phone:String): List<Candidate>? = candiRepo.findByPhone(phone)
     fun findByEmail(email:String): List<Candidate>? = candiRepo.findByEmail(email)
@@ -155,7 +159,15 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
     }
 
     fun setMark(idCandidate: Int): ResponseEntity<ResponseObject> {
-        return null!!
+        var foundCandidate: Candidate = candiRepo.getById(idCandidate)
+        for (t in foundCandidate.tests!!) {
+            when(t.subject) {
+                1 -> foundCandidate.englishMark = t.marks
+                2 -> foundCandidate.codingMark = t.marks
+                3 -> foundCandidate.knowledgeMark = t.marks
+            }
+        }
+        return ResponseEntity.ok(ResponseObject("OK!","Set diem thanh cong cho ung vien ${foundCandidate.name}",""))
     }
 
     fun getAllResult(): MutableList<TempResultCandidate> = tempResultRepo.findAll()
@@ -236,6 +248,11 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         return essayAnswerRepo.save(updateAnswer)
     }
 
+    fun deleteEssay(idAnswer: Int): ResponseEntity<ResponseObject> {
+        essayAnswerRepo.deleteById(idAnswer)
+        return ResponseEntity.ok(ResponseObject("OK!","Xoa thanh cong dap an ${idAnswer}",""))
+    }
+
     fun getAllSubject(): MutableList<Subject> = subRepo.findAll()
     fun addSubject(newSubject: Subject): Subject = subRepo.save(newSubject)
     fun deleteSubject(idSubject: Int): ResponseEntity<ResponseObject> {
@@ -248,4 +265,5 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         levelRepo.deleteById(idLevel)
         return ResponseEntity.ok(ResponseObject("OK!","Xoa thanh cong level ${idLevel}",""))
     }
+
 }

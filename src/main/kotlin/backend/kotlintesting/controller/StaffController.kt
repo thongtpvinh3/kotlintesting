@@ -108,7 +108,7 @@ class StaffController(
     @PutMapping("/setmark/{idCandidate}")
     fun setMark(@PathVariable("idCandidate") idCandidate: Int): ResponseEntity<ResponseObject> = staffService.setMark(idCandidate)
 
-    @GetMapping("/allresult")
+    @GetMapping("/result")
     @ResponseBody
     fun getAllResult(): MutableList<TempResultCandidate> = staffService.getAllResult()
 
@@ -182,7 +182,10 @@ class StaffController(
     @ResponseBody
     fun updateEssayAnswer(@PathVariable("idAnswer") idAnswer: Int, @RequestParam("answer") answer: String): EssayAnswer = staffService.updateEssayAnswer(idAnswer,answer)
 
+    @DeleteMapping("/delete/essay/{idAnswer}")
+    fun deleteEssayAnswer(@PathVariable("idAnswer") idAnswer: Int): ResponseEntity<ResponseObject> = staffService.deleteEssay(idAnswer)
     //-----------------------SUBJECT,LEVEL----------------------------------------------------------
+
     @GetMapping("/subject")
     @ResponseBody
     fun getAllSubject(): MutableList<Subject> = staffService.getAllSubject()
