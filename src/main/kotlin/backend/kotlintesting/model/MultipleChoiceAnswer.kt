@@ -6,7 +6,7 @@ import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 @Entity
-@Table(name = "mc_question")
+@Table(name = "mc_answer")
 data class MultipleChoiceAnswer (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
