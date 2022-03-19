@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MultipleAnswerRepo: JpaRepository<MultipleChoiceAnswer, Int> {
 
-    @Query("SELECT * FROM mc_question m WHERE m.id = :idAnswer AND m.istrue = :isTrue", nativeQuery = true)
+    @Query("SELECT * FROM mc_answer m WHERE m.id = :idAnswer AND m.istrue = :isTrue", nativeQuery = true)
     fun findWithIdAndisTrue(
         @Param("idAnswer") idAnswer: Int?,
         @Param("isTrue") isTrue: Int?
-    ): MultipleChoiceAnswer
+    ): MultipleChoiceAnswer?
 }

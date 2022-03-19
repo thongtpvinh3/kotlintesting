@@ -16,7 +16,7 @@ data class MultipleChoiceAnswer (
     var isTrue:Int?,
     @Column
     var answer:String?,
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     var question: Question?
 ) : java.io.Serializable

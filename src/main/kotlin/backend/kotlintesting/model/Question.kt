@@ -29,11 +29,11 @@ data class Question (
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     @JoinTable(name = "test_question", joinColumns = [JoinColumn(name = "id_question")], inverseJoinColumns = [JoinColumn(name = "id_test")])
-    var tests: Set<Test>,
+    var tests: MutableSet<Test>?,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "question", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
-    var multipleChoiceAnswer: Set<MultipleChoiceAnswer>?,
+    var multipleChoiceAnswer: MutableList<MultipleChoiceAnswer>?,
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "question", cascade = [CascadeType.ALL])
     @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
     var essayAnswer: EssayAnswer?

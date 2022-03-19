@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import kotlinx.serialization.Contextual
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -35,14 +37,16 @@ data class Test (
     @Column(name = "code_test", unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var codeTest:String,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    var candidate:Candidate?,
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @JoinTable(name = "candidate_test", joinColumns = [JoinColumn(name = "id_test")], inverseJoinColumns = [JoinColumn(name = "id_candidate")])
+    var candidates: MutableList<Candidate>?,
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnoreProperties(*[ "hibernateLazyInitializer", "handler" ])
     @JoinTable(name = "test_question",
     joinColumns = [JoinColumn(name = "id_test")], inverseJoinColumns = [JoinColumn(name = "id_question")])
-    var questions: Set<Question>?
+    var questions: MutableList<Question>?
  ) : java.io.Serializable {
     fun timeToSecond(): Int {
         return LocalTime.of(times!!.hour, times!!.minute, times!!.second).toSecondOfDay()

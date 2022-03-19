@@ -18,6 +18,8 @@ interface CandidateRepository: JpaRepository<Candidate, Int> {
     @Query("SELECT candidate FROM Candidate candidate WHERE candidate.phone like %:phone%")
     fun findByPhone(@Param("phone") phone:String) : List<Candidate>
 
+//    @Query("SELECT c FROM Candidate c WHERE c.")
+//    fun findByTests(idTest: Int): List<Candidate>?
 
 
 }

@@ -36,6 +36,8 @@ class StaffController(
     @GetMapping("/candidate/email/{email}")
     fun findByEmail(@PathVariable("email") email: String): List<Candidate>? = staffService.findByEmail(email)
 
+    @GetMapping("/candidate/test/{idTest}")
+    fun findByTest(@PathVariable("idTest") idTest: Int): List<Candidate>? = staffService.findByTests(idTest)
     @GetMapping("/candidate")
     @ResponseBody
     fun allCandidate(): List<Candidate> = staffService.getAllCandidate()
@@ -135,7 +137,7 @@ class StaffController(
 
     @GetMapping("/question/test/{idTest}")
     @ResponseBody
-    fun getQuestionByTest(@PathVariable("idTest") idTest: Int): Set<Question> = staffService.getQuestionByTest(idTest)
+    fun getQuestionByTest(@PathVariable("idTest") idTest: Int): List<Question> = staffService.getQuestionByTest(idTest)
 
     @PostMapping("/addquestion")
     @ResponseBody

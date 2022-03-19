@@ -34,13 +34,20 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
     @GetMapping("/testpage")
     fun toTestPage() = "testpage"
 
-    @GetMapping("/test/{idTest}")
+    @GetMapping("/test")
     @ResponseBody
-    fun toThisTestView(@PathVariable("idTest") idTest: Int,req: HttpServletRequest): Test? {
+    fun getAllCandidateTest(req : HttpServletRequest): MutableSet<Test>? {
+        val candidate: Candidate = req.session.getAttribute("candidate") as Candidate
+        return candidate.tests
+    }
+
+    @GetMapping("/test/{idTest}/{idCandidate}")
+    @ResponseBody
+    fun toThisTestView(@PathVariable("idTest") idTest: Int,@PathVariable("idCandidate") idCandidate: Int, req: HttpServletRequest): Test? {
         val session: HttpSession = req.session
         var thisTest: Test = candidateService.getTestById(idTest)
         session.setAttribute("test",thisTest)
-        return thisTest
+        return candidateService.joinThisTest(idTest,idCandidate)
     }
 
     @PostMapping("/doingtest")
@@ -61,7 +68,7 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
             }
         } else {
             val finalRes: MutableList<TempResultCandidate> = mutableListOf()
-            val finalRes1: Map<Int, TempResultCandidate> = valueCache.getHashCachAns("ans") as Map<Int, TempResultCandidate>
+            val finalRes1: Map<Int, TempResultCandidate> = valueCache.getHashCachAns("ans")
 
             for (e in finalRes1.entries) {
                 finalRes.add(e.value)
@@ -72,8 +79,10 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
         }
     }
 
-    @PostMapping("/submit/{idTest}/{idCandidate}")
-    fun submitTest(@PathVariable("idTest") idTest: Int,@PathVariable("idCandidate") idCandidate: Int): ResponseEntity<ResponseObject> {
+    @PostMapping("/submit/{idTest}")
+    fun submitTest(@PathVariable("idTest") idTest: Int, req: HttpServletRequest): ResponseEntity<ResponseObject> {
+        var candidate: Candidate = req.session.getAttribute("candidate") as Candidate
+        val idCandidate: Int = candidate.id
         candidateService.setTestIsDone(idTest,idCandidate)
         val tempAnswerResult: MutableList<TempResultCandidate> = mutableListOf()
         val tempAnsResult1: Map<Int, TempResultCandidate> = valueCache.getHashCachAns("ans") as Map<Int, TempResultCandidate>
@@ -81,7 +90,9 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
             tempAnswerResult.add(e.value)
         }
         candidateService.saveAllResult(tempAnswerResult)
+        req.session.setAttribute("test",null)
         valueCache.delete("ans")
+
         return ResponseEntity.ok(ResponseObject("OK!","Nop Bai Thanh Cong!",""))
     }
 
