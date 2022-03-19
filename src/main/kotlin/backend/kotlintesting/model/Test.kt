@@ -35,8 +35,6 @@ data class Test (
     @Column(name = "code_test", unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var codeTest:String,
-    @Column
-    var marks:Double = 0.0,
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     var candidate:Candidate?,
