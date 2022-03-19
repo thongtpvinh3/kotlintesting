@@ -3,7 +3,6 @@ package backend.kotlintesting.controller
 import backend.kotlintesting.model.*
 import backend.kotlintesting.responseException.ResponseObject
 import backend.kotlintesting.service.StaffService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
@@ -72,9 +71,9 @@ class StaffController(
     @ResponseBody
     fun getTestBySubject(@PathVariable("idSubject") idSubject: Int): List<Test>? = staffService.getTestBySubject(idSubject)
 
-    @GetMapping("/test/done/{isDone}")
-    @ResponseBody
-    fun getTestByIsDone(@PathVariable("isDone") isDone: Int): List<Test>? = staffService.findByIsDone(isDone)
+//    @GetMapping("/test/done/{isDone}")
+//    @ResponseBody
+//    fun getTestByIsDone(@PathVariable("isDone") isDone: Int): List<Test>? = staffService.findByIsDone(isDone)
 
     @GetMapping("/test/level/{level}")
     @ResponseBody
@@ -82,7 +81,7 @@ class StaffController(
 
     @GetMapping("/test/candidate/{idCandidate}")
     @ResponseBody
-    fun getTestByCandidateId(@PathVariable("idCandidate") idCandidate: Int): List<Test>? = staffService.findByCandidateId(idCandidate)
+    fun getTestByCandidateId(@PathVariable("idCandidate") idCandidate: Int): Set<Test>? = staffService.findByCandidateId(idCandidate)
 
     @PostMapping("/addtest")
     fun addTest(@RequestBody newTest: Test): ResponseEntity<ResponseObject> = staffService.addTest(newTest)
@@ -99,11 +98,11 @@ class StaffController(
     @PutMapping("/addtestforcandidate/{idTest}/{idCandidate}")
     fun addTestForCandidate(@PathVariable("idTest") idTest: Int, @PathVariable("idCandidate") idCandidate: Int): ResponseEntity<ResponseObject>? = staffService.addTestForCandidate(idTest,idCandidate)
 
-    @PutMapping("/reviewmcanswer/{idTest}")
-    fun reviewMCAnswer(@PathVariable("idTest") idTest: Int): Double = staffService.reviewMCQuestion(idTest)
+    @PutMapping("/reviewmcanswer/{idTest}/{idCandidate}")
+    fun reviewMCAnswer(@PathVariable("idTest") idTest: Int, @PathVariable("idCandidate") idCandidate: Int): Double = staffService.reviewMCQuestion(idTest,idCandidate)
 
-    @PutMapping("/reviewessay/{idTest}/{idEssay}/{mark}")
-    fun reviewEssay(@PathVariable("idTest") idTest: Int,@PathVariable("idEssay") idEssay: Int,@PathVariable("mark") mark:Double): ResponseEntity<ResponseObject> = staffService.reviewEssay(idTest,idEssay,mark)
+//    @PutMapping("/reviewessay/{idTest}/{idEssay}/{mark}")
+//    fun reviewEssay(@PathVariable("idTest") idTest: Int,@PathVariable("idEssay") idEssay: Int,@PathVariable("mark") mark:Double): ResponseEntity<ResponseObject> = staffService.reviewEssay(idTest,idEssay,mark)
 
     @PutMapping("/setmark/{idCandidate}")
     fun setMark(@PathVariable("idCandidate") idCandidate: Int): ResponseEntity<ResponseObject> = staffService.setMark(idCandidate)
@@ -136,7 +135,7 @@ class StaffController(
 
     @GetMapping("/question/test/{idTest}")
     @ResponseBody
-    fun getQuestionByTest(@PathVariable("idTest") idTest: Int): MutableList<Question> = staffService.getQuestionByTest(idTest)
+    fun getQuestionByTest(@PathVariable("idTest") idTest: Int): Set<Question> = staffService.getQuestionByTest(idTest)
 
     @PostMapping("/addquestion")
     @ResponseBody

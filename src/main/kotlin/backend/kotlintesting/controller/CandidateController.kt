@@ -1,7 +1,10 @@
 package backend.kotlintesting.controller
 
+import backend.kotlintesting.model.Candidate
 import backend.kotlintesting.model.TempResultCandidate
 import backend.kotlintesting.model.Test
+import backend.kotlintesting.repo.CandidateTestRepo
+import backend.kotlintesting.repo.TestRepo
 import backend.kotlintesting.responseException.ResponseObject
 import backend.kotlintesting.service.CandidateService
 import backend.kotlintesting.service.RedisCandidateDoTestCache
@@ -31,18 +34,20 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
     @GetMapping("/testpage")
     fun toTestPage() = "testpage"
 
-    @GetMapping("/test")
+    @GetMapping("/test/{idTest}")
     @ResponseBody
-    fun toThisTestView(req: HttpServletRequest, model: Model): String {
+    fun toThisTestView(@PathVariable("idTest") idTest: Int,req: HttpServletRequest): Test? {
         val session: HttpSession = req.session
-        model.addAttribute(session.getAttribute("test"))
-        return "dotest"
+        var thisTest: Test = candidateService.getTestById(idTest)
+        session.setAttribute("test",thisTest)
+        return thisTest
     }
 
     @PostMapping("/doingtest")
     fun cacheAnswer(req: HttpServletRequest, @RequestBody tempAns: TempResultCandidate) {
         val session: HttpSession = req.session
         val thisTest: Test = session.getAttribute("test") as Test
+        val thisCandidate: Candidate = session.getAttribute("candidate") as Candidate
         valueCache.cache("testtime", LocalTime.now().toSecondOfDay())
         val timenow = valueCache.getCachedValue("testtime") as Int
         val testtime: Int = thisTest.timeToSecond()
@@ -62,14 +67,14 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
                 finalRes.add(e.value)
             }
             candidateService.saveAllResult(finalRes)
-            candidateService.setTestIsDone(thisTest.id)
+            candidateService.setTestIsDone(thisTest.id,thisCandidate.id)
             valueCache.delete("ans")
         }
     }
 
-    @PostMapping("/submit/{idTest}")
-    fun submitTest(@PathVariable("idTest") idTest: Int): ResponseEntity<ResponseObject> {
-        candidateService.setTestIsDone(idTest)
+    @PostMapping("/submit/{idTest}/{idCandidate}")
+    fun submitTest(@PathVariable("idTest") idTest: Int,@PathVariable("idCandidate") idCandidate: Int): ResponseEntity<ResponseObject> {
+        candidateService.setTestIsDone(idTest,idCandidate)
         val tempAnswerResult: MutableList<TempResultCandidate> = mutableListOf()
         val tempAnsResult1: Map<Int, TempResultCandidate> = valueCache.getHashCachAns("ans") as Map<Int, TempResultCandidate>
         for (e in tempAnsResult1.entries) {
@@ -83,7 +88,8 @@ class CandidateController(@Autowired private val candidateService: CandidateServ
     @PostMapping("/logout")
     fun logOut(req: HttpServletRequest): String {
         val session: HttpSession = req.session
-        session.setAttribute("test",null)
+//        session.setAttribute("test",null)
+        session.setAttribute("candidate",null)
         return "redirect:/testingonline"
     }
 

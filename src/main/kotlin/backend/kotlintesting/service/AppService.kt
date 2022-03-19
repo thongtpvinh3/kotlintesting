@@ -1,5 +1,6 @@
 package backend.kotlintesting.service
 
+import backend.kotlintesting.model.Candidate
 import backend.kotlintesting.model.Staff
 import backend.kotlintesting.model.Test
 import backend.kotlintesting.repo.CandidateRepository
@@ -23,35 +24,41 @@ class AppService(val staffRepo: StaffRepo, val candidateRepo: CandidateRepositor
         return false
     }
 
-    fun joinByTestCode(code: String?): Boolean {
-        val findTest: Test? = testRepo.findByCodeTest(code!!)
-        println(findTest)
-        if (findTest != null) {
-            val timeNow = LocalDateTime.now().toLocalTime().toSecondOfDay()
-            val timeTest: Int = findTest.timeToSecond()
-            val timeStart: Int = findTest.dates!!.toLocalTime().toSecondOfDay()
-            return if (findTest.isDone == 0) {
-                if (findTest.dates!!.toLocalDate().equals(LocalDate.now()) === false) {
-                    println("Chua den ngay hoac da qua ngay test")
-                    return false
-                }
-                if (findTest.dates!!.toLocalTime().isAfter(LocalTime.now())) {
-                    println("Chua den gio")
-                    return false
-                }
-                if (timeNow - timeStart > timeTest) {
-                    println("Da het thoi gian lam bai")
-                    return false
-                }
-                return true
-            } else {
-                println("Bai Thi Da Lam xong")
-                return false
-            }
+//    fun joinByTestCode(code: String?): Boolean {
+//        val findTest: Test? = testRepo.findByCodeTest(code!!)
+//        println(findTest)
+//        if (findTest != null) {
+//            val timeNow = LocalDateTime.now().toLocalTime().toSecondOfDay()
+//            val timeTest: Int = findTest.timeToSecond()
+//            val timeStart: Int = findTest.dates!!.toLocalTime().toSecondOfDay()
+//            return if (findTest.isDone == 0) {
+//                if (findTest.dates!!.toLocalDate().equals(LocalDate.now()) === false) {
+//                    println("Chua den ngay hoac da qua ngay test")
+//                    return false
+//                }
+//                if (findTest.dates!!.toLocalTime().isAfter(LocalTime.now())) {
+//                    println("Chua den gio")
+//                    return false
+//                }
+//                if (timeNow - timeStart > timeTest) {
+//                    println("Da het thoi gian lam bai")
+//                    return false
+//                }
+//                return true
+//            } else {
+//                println("Bai Thi Da Lam xong")
+//                return false
+//            }
+//        }
+//        return false
+//    }
+
+    fun getJoinCandidate(idCandidate: Int) :Candidate? = candidateRepo.getById(idCandidate)
+    fun joinByIdCandidate(idCandidate: Int): Boolean {
+        if (candidateRepo.getById(idCandidate)!=null) {
+            return true
         }
         return false
     }
-
-    fun getWithCode(code: String) :Test? = testRepo.findByCodeTest(code)
 
 }

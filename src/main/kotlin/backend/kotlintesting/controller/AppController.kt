@@ -15,12 +15,12 @@ public class AppController(private val appService: AppService) {
     @GetMapping("/login")
     fun toStaffLogin(): String = "login"
 
-    @PostMapping("/jointest")
-    fun joinWithTestCode(@RequestParam code:String, req:HttpServletRequest): String? {
-        if (appService.joinByTestCode(code)) {
+
+    @PostMapping("/jointest/{idCandidate}")
+    fun joinWithTestCode(@PathVariable("idCandidate") idCandidate: Int, req:HttpServletRequest): String? {
+        if (appService.joinByIdCandidate(idCandidate)) {
             val session: HttpSession = req.getSession()
-            session.setAttribute("test", appService.getWithCode(code))
-            session.setAttribute("candidate",appService.getWithCode(code)?.candidate)
+            session.setAttribute("candidate", appService.getJoinCandidate(idCandidate))
             return "redirect:/candidate/testpage"
         }
         return "redirect:/testingonline"

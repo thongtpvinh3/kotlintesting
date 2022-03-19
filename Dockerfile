@@ -26,14 +26,14 @@ RUN ./mvnw package -DskipTests
 #### Stage 2: A minimal docker image with command to run the app 
 FROM openjdk:8-jre-alpine
 
-ARG DEPENDENCY=/app/target/testingonline-1.0
+ARG DEPENDENCY=/app/target/kotlintesting-1.0
 
 # Copy project dependencies from the build stage
 # COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 # COPY --from=build ${DEPENDENCY}/WEB-INF/classes /app
 # COPY --from=build ${DEPENDENCY}/WEB-INF/lib /app/lib
 
-COPY --from=build /app/target/testingonline-1.0.war /app
+COPY --from=build /app/target/kotlintesting-1.0.war /app
 
 
-ENTRYPOINT ["java","-jar","/app/testingonline-1.0.war"]
+ENTRYPOINT ["java","-jar","/app/kotlintesting-1.0.jar"]

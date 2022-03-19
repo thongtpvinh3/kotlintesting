@@ -14,7 +14,8 @@ import java.time.LocalDateTime
 
 @Service
 public class StaffService(@Autowired private val subRepo: SubjectRepository,@Autowired private val levelRepo: LevelRepository,@Autowired private val candiRepo: CandidateRepository, @Autowired private val questionRepo: QuestionRepo, @Autowired private val staffRepo:StaffRepo,
-                            @Autowired private val testRepo: TestRepo, @Autowired private val tempResultRepo: TempResultRepo, @Autowired private val multipleAnswerRepo: MultipleAnswerRepo, @Autowired private val essayAnswerRepo: EssayAnswerRepository) {
+                            @Autowired private val testRepo: TestRepo, @Autowired private val tempResultRepo: TempResultRepo, @Autowired private val multipleAnswerRepo: MultipleAnswerRepo, @Autowired private val essayAnswerRepo: EssayAnswerRepository,
+                            @Autowired private val candiddateTestRepo: CandidateTestRepo) {
 
     var logger: Logger = LoggerFactory.getLogger(StaffService::class.java)
     //-------------------------CANDIDATE-----------------------------------------------
@@ -44,9 +45,8 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
     fun getTestByName(name: String): List<Test>? = testRepo.findByName(name)
     fun getTestByCode(codeTest: String): Test? = testRepo.findByCodeTest(codeTest)
     fun getTestBySubject(idSubject: Int): List<Test>? = testRepo.findBySubject(idSubject)
-    fun findByIsDone(done: Int): List<Test>? = testRepo.findByIsDone(done)
     fun findByLevels(level: Int): List<Test>? = testRepo.findByLevel(level)
-    fun findByCandidateId(idCandidate: Int): List<Test>? = candiRepo.getById(idCandidate).tests
+    fun findByCandidateId(idCandidate: Int): Set<Test>? = candiRepo.getById(idCandidate).tests
 
     fun addTest(newTest: Test): ResponseEntity<ResponseObject> =
         if (!newTest.dates!!.isAfter(LocalDateTime.now()))
@@ -69,8 +69,8 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         var foundTest: Test = testRepo.getById(idTest)
 
         if (foundTest.questions!!.size == 0 && newQuestion.level == foundTest.level && newQuestion.subject == foundTest.subject) {
-            var newList:MutableList<Question> = foundTest.questions!!
-            newList.add(newQuestion)
+            var newList: Set<Question> = foundTest.questions!!
+            newList.toHashSet().add(newQuestion)
             foundTest.questions = newList
             return ResponseEntity.ok(ResponseObject("OK","Them thanh cong cau hoi ${idQuestion} cho bai test ${idTest}",testRepo.save(foundTest)))
         }
@@ -81,8 +81,8 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
                 )
             }
             if (foundTest.questions!!.contains(newQuestion) == false && newQuestion.level == foundTest.level && newQuestion.subject == foundTest.subject) {
-                var newList: MutableList<Question> = foundTest.questions!!
-                newList.add(newQuestion)
+                var newList: Set<Question> = foundTest.questions!!
+                newList.toHashSet().add(newQuestion)
                 foundTest.questions = newList
                 return ResponseEntity.ok(ResponseObject("OK","Them thanh cong cau hoi ${idQuestion} cho bai test ${idTest}",testRepo.save(foundTest)))
             } else return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(ResponseObject("FAILED!","Cau hoi bi trung!",""))
@@ -96,7 +96,7 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         if(newTest.level != foundCandidate.level) return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(ResponseObject("FAILED","Level khong phu hop!",""))
         if(foundCandidate.tests!!.contains(newTest) == false) {
             val newList = foundCandidate.tests
-            newList!!.add(newTest)
+            newList!!.toHashSet().add(newTest)
             foundCandidate.tests = newList
             newTest.candidate = foundCandidate
             testRepo.save(newTest)
@@ -104,10 +104,9 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         } else return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(ResponseObject("FAILED!","Ung vien da co bai test nay!",""))
     }
 
-    fun reviewMCQuestion(idTest: Int): Double {
+    fun reviewMCQuestion(idTest: Int, idCandidate: Int): Double {
         var foundTest: Test = testRepo.getById(idTest)
-        var thisTestQuestion: MutableList<Question> = foundTest.questions!!
-        var idCandidate: Int = foundTest.candidate!!.id
+        var thisTestQuestion: Set<Question> = foundTest.questions!!
         var result: MutableList<TempResultCandidate> = tempResultRepo.getAnswerOfCandidate(idCandidate,0)
         var count: Int = 0
         var rightResult: Int = 0
@@ -128,15 +127,18 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         var tmp: Double = df.format(oneMarkQuestion).toDouble()
 
         var lastResult: Double = tmp*rightResult
+        var candidateTest: CandidateTest = candiddateTestRepo.findByCandidateIdAndTestId(idCandidate,idTest)
         foundTest.marks = lastResult
+        candiddateTestRepo.save(candidateTest)
         testRepo.save(foundTest)
 
         return lastResult
     }
 
-    fun reviewEssay(idTest: Int,idEssay: Int, mark: Double): ResponseEntity<ResponseObject> {
+    fun reviewEssay(idTest: Int,idCandidate: Int,idEssay: Int, mark: Double): ResponseEntity<ResponseObject> {
         var foundTest: Test = testRepo.getById(idTest)
-        var listQuestion: MutableList<Question> = foundTest.questions!!
+        var listQuestion: Set<Question> = foundTest.questions!!
+        var candidateTest: CandidateTest = candiddateTestRepo.findByCandidateIdAndTestId(idTest,idCandidate)
         var count: Int = 0
         for (q in listQuestion) {
             if (q.type == 1) count++
@@ -160,11 +162,11 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
 
     fun setMark(idCandidate: Int): ResponseEntity<ResponseObject> {
         var foundCandidate: Candidate = candiRepo.getById(idCandidate)
-        for (t in foundCandidate.tests!!) {
-            when(t.subject) {
-                1 -> foundCandidate.englishMark = t.marks
-                2 -> foundCandidate.codingMark = t.marks
-                3 -> foundCandidate.knowledgeMark = t.marks
+        for (ct in candiddateTestRepo.findByCandidateId(idCandidate)) {
+            when(testRepo.getById(ct.testId!!).subject) {
+                1 -> foundCandidate.englishMark = ct.marks
+                2 -> foundCandidate.codingMark = ct.marks
+                3 -> foundCandidate.knowledgeMark = ct.marks
             }
         }
         return ResponseEntity.ok(ResponseObject("OK!","Set diem thanh cong cho ung vien ${foundCandidate.name}",""))
@@ -179,7 +181,7 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
     fun getQuestionByType(idType: Int): MutableList<Question> = questionRepo.findByType(idType)!!
     fun getQuestionBySubject(idSubject: Int): MutableList<Question> = questionRepo.findBySubject(idSubject)!!
     fun getQuestionByLevel(idLevel: Int): MutableList<Question> = questionRepo.findByLevel(idLevel)!!
-    fun getQuestionByTest(idTest: Int): MutableList<Question> = testRepo.getById(idTest).questions!!
+    fun getQuestionByTest(idTest: Int): Set<Question> = testRepo.getById(idTest).questions!!
     fun addQuestion(newQuestion: Question): Question = questionRepo.save(newQuestion)
     fun deleteQuestion(idQuestion: Int): ResponseEntity<ResponseObject> = ResponseEntity.ok(ResponseObject("OK!","Xoa thanh cong cau hoi ${idQuestion}",questionRepo.deleteById(idQuestion)))
     fun updateQuestion(updateQuestion: Question): Question = questionRepo.save(updateQuestion)
@@ -190,8 +192,8 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         var foundQuestion: Question = questionRepo.getById(idQuestion)
         if (foundQuestion.type == 0) {
             var answer: MultipleChoiceAnswer = multipleAnswerRepo.getById(idAnswer)
-            var newListAnswer: MutableList<MultipleChoiceAnswer> = foundQuestion.multipleChoiceAnswer!!
-            newListAnswer.add(answer)
+            var newListAnswer: Set<MultipleChoiceAnswer> = foundQuestion.multipleChoiceAnswer!!
+            newListAnswer.toHashSet().add(answer)
             foundQuestion.multipleChoiceAnswer = newListAnswer
             answer.question = foundQuestion
             return ResponseEntity.ok(ResponseObject("OK!","Them cau tra loi cho cau hoi ${idQuestion}",questionRepo.save(foundQuestion)))
@@ -206,7 +208,7 @@ public class StaffService(@Autowired private val subRepo: SubjectRepository,@Aut
         var foundQuestion: Question = questionRepo.getById(idQuestion)
         if (foundQuestion.type == 0) {
             newAnswer.question = foundQuestion
-            foundQuestion.multipleChoiceAnswer!!.add(newAnswer)
+            foundQuestion.multipleChoiceAnswer!!.toHashSet().add(newAnswer)
             return ResponseEntity.ok(ResponseObject("OK!","Them thanh cong dap an cho cau hoi ${idQuestion}",questionRepo.save(foundQuestion)))
         }
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(ResponseObject("FAILED!","Cau hoi khong phai loai trac nghiem!",""))

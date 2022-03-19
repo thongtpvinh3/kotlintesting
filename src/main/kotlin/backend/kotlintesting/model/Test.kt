@@ -32,8 +32,6 @@ data class Test (
     @DateTimeFormat(pattern = "HH:mm:ss", iso = DateTimeFormat.ISO.TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     var times:LocalTime?,
-    @Column(name = "is_done")
-    var isDone:Int = 0,
     @Column(name = "code_test", unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var codeTest:String,
@@ -46,7 +44,7 @@ data class Test (
     @JsonIgnoreProperties(*[ "hibernateLazyInitializer", "handler" ])
     @JoinTable(name = "test_question",
     joinColumns = [JoinColumn(name = "id_test")], inverseJoinColumns = [JoinColumn(name = "id_question")])
-    var questions:MutableList<Question>?
+    var questions: Set<Question>?
  ) : java.io.Serializable {
     fun timeToSecond(): Int {
         return LocalTime.of(times!!.hour, times!!.minute, times!!.second).toSecondOfDay()

@@ -12,7 +12,6 @@ import javax.transaction.Transactional
 interface TestRepo: JpaRepository<Test, Int> {
 
     fun findBySubject(subject: Int) : List<Test>
-    fun findByIsDone(isDone: Int): List<Test>
     fun findByLevel(level: Int): List<Test>?
 
     @Query("SELECT test FROM Test test WHERE test.name LIKE %:name%")
@@ -20,10 +19,5 @@ interface TestRepo: JpaRepository<Test, Int> {
 
     @Query("SELECT test FROM Test test WHERE test.codeTest LIKE :code")
     fun findByCodeTest(@Param("code") code: String): Test?
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE Test test SET is_done = 1 WHERE id = ?1", nativeQuery = true)
-    fun setTestIsDone(id: Int)
-
 
 }

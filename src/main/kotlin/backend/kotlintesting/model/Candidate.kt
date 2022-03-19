@@ -3,8 +3,6 @@ package backend.kotlintesting.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
 import javax.persistence.*
 
 @Entity
@@ -22,16 +20,16 @@ data class Candidate (
     var phone:String,
     @Column
     var email:String,
-    @Column(name = "english_mark")
-    var englishMark: Double? = 0.0,
-    @Column(name = "coding_mark")
-    var codingMark: Double? = 0.0,
-    @Column(name = "knowledge_mark")
-    var knowledgeMark: Double? = 0.0,
+    @Column(name = "english_mark", columnDefinition = "DOUBLE DEFAULT 0")
+    var englishMark: Double?,
+    @Column(name = "coding_mark", columnDefinition = "DOUBLE DEFAULT 0")
+    var codingMark: Double?,
+    @Column(name = "knowledge_mark", columnDefinition = "DOUBLE DEFAULT 0")
+    var knowledgeMark: Double?,
     @OneToMany(mappedBy = "candidate")
-    @Cascade(CascadeType.ALL)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(*["hibernateLazyInitializer","handler"])
-    var tests: MutableList<Test>?,
+    var tests: Set<Test>?,
     @Column
     var avatar:String?
 ) : java.io.Serializable

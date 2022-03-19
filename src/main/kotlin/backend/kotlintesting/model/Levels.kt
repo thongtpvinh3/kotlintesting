@@ -19,11 +19,11 @@ data class Levels(
     var name:String?,
     @ManyToMany
     @JsonIgnore
-    var candidates: List<Candidate>?,
+    var candidates: Set<Candidate>?,
     @ManyToMany
     @JsonIgnore
-    var questions: List<Question>?,
+    var questions: Set<Question>?,
     @ManyToMany
     @JsonIgnore
-    var tests: List<Test>?
+    var tests: Set<Test>?
 ): java.io.Serializable
