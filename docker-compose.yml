@@ -38,7 +38,7 @@ services:
 
   testing-online:
     build: ./
-    image: testingonlinekotlin:v1.1
+    image: testingonlinekotlin:v1.0
     ports:
       - "8080:8080"
     depends_on:

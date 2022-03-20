@@ -32,8 +32,6 @@ ARG DEPENDENCY=/app/target/voi-1.0
 # COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 # COPY --from=build ${DEPENDENCY}/WEB-INF/classes /app
 # COPY --from=build ${DEPENDENCY}/WEB-INF/lib /app/lib
-
-COPY --from=build /app/target/voi-1.0.war /app
-
+COPY --from=build ./app/target/voi-1.0.jar /app
 
 ENTRYPOINT ["java","-jar","/app/voi-1.0.jar"]
