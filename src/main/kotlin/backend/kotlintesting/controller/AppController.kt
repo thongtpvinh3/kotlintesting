@@ -7,21 +7,16 @@ import javax.servlet.http.HttpSession
 
 @CrossOrigin(origins = ["http://localhost:3000"])
 @RestController
-public class AppController(private val appService: AppService) {
-
-    @GetMapping("/testingonline")
-    fun toWebPage(): String = "homepage"
-
-    @GetMapping("/login")
-    fun toStaffLogin(): String = "login"
-
+class AppController(private val appService: AppService) {
 
     @PostMapping("/jointest/{idCandidate}")
-    fun joinWithTestCode(@PathVariable("idCandidate") idCandidate: Int, req:HttpServletRequest): String? {
-        if (appService.joinByIdCandidate(idCandidate)) {
-            val session: HttpSession = req.getSession()
-            session.setAttribute("candidate", appService.getJoinCandidate(idCandidate))
-            return "redirect:/candidate/testpage"
+    fun joinWithTestCode(@PathVariable("idCandidate") idCandidate: Int, req:HttpServletRequest): Any? {
+        if (appService.getJoinCandidate(idCandidate)!=null) {
+            val session: HttpSession = req.session
+            val candidate = appService.getJoinCandidate(idCandidate)
+            if (candidate.isDone == 1) return "Bạn đã làm xong bài test"
+            session.setAttribute("candidate", candidate)
+            return candidate
         }
         return "redirect:/testingonline"
     }
@@ -35,7 +30,7 @@ public class AppController(private val appService: AppService) {
             session.setAttribute("staff", appService.findByUsernameAndPassword(username, password))
             "redirect:/staff/home"
         } else {
-            "login"
+            "redirect:/login"
         }
     }
 

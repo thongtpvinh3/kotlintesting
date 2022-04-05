@@ -1,8 +1,6 @@
 package backend.kotlintesting.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.hibernate.annotations.Cascade
-import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 @Entity
@@ -11,12 +9,12 @@ data class MultipleChoiceAnswer (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    var id:Int?,
+    var id:Int? = -1,
     @Column(name = "istrue")
-    var isTrue:Int?,
+    var isTrue:Int = 0,
     @Column
-    var answer:String?,
+    var answer:String? = "",
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    var question: Question?
+    var question: Question? = null
 ) : java.io.Serializable

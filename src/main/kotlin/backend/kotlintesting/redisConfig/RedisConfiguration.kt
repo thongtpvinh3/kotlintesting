@@ -11,8 +11,8 @@ class RedisConfiguration {
 
     @Bean
     fun redisConnectionFactory(): LettuceConnectionFactory {
-        val config: RedisStandaloneConfiguration = RedisStandaloneConfiguration()
-        config.hostName = "localhost"
+        val config = RedisStandaloneConfiguration()
+        config.hostName = "redis"
         config.port = 6379
         return LettuceConnectionFactory(config)
     }

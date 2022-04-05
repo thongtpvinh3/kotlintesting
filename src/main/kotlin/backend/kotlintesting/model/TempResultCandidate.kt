@@ -16,5 +16,7 @@ data class TempResultCandidate (
         @Column
         var answer:String?,
         @Column(name = "id_candidate")
-        var idCandidate: Int?
+        var idCandidate: Int?,
+        @Column(name = "id_test")
+        var idTest: Int?
 ) : java.io.Serializable

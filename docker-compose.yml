@@ -24,9 +24,9 @@ services:
   # Database Service (Mysql)
   db:
     image: mysql:5.7
-    ports:
-      - "3308:3306"
     restart: always
+    ports:
+      - "3307:3306"
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: testingonline
@@ -36,9 +36,9 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
 
-  testing-online:
+  testing-kotlin:
     build: ./
-    image: testingonlinekotlin:v1.0
+    image: testingkotlin:v1.0
     ports:
       - "8080:8080"
     depends_on:
@@ -46,10 +46,12 @@ services:
       - redis
     volumes:
       - ./application.properties:/app/application.properties
+    environment:
+      - REDIS_URL=redis://redis:6379
 
   redis:
     image: redis:6-alpine
     ports:
-      - 6381:6379
+      - 6380:6379
     volumes:
       - ./data/redis:/data

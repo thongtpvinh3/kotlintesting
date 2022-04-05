@@ -1,8 +1,6 @@
 package backend.kotlintesting.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.hibernate.annotations.Cascade
-import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 @Entity
@@ -13,11 +11,11 @@ data class EssayAnswer (
     @Column
     var id: Int?,
     @Column
-    var answer:String?,
-    @Column
-    var mark: Double?,
+    var answer:String? = "",
     @OneToOne
+    @JoinColumn(name = "id_question")
+//    @Cascade(CascadeType.ALL)
     @JsonIgnore
-    var question: Question?
+    var question: Question? = null
 
 ): java.io.Serializable

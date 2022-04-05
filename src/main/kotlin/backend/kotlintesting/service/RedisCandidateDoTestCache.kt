@@ -1,63 +1,47 @@
 package backend.kotlintesting.service
 
 import backend.kotlintesting.model.TempResultCandidate
-import backend.kotlintesting.repo.EssayAnswerRepository
-import backend.kotlintesting.repo.MultipleAnswerRepo
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.HashOperations
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.core.ValueOperations
 import org.springframework.stereotype.Service
-import java.util.concurrent.TimeUnit
 
 @Service
 class RedisCandidateDoTestCache(redisTemplate: RedisTemplate<String, Any>) {
 
-    private val valueOps: ValueOperations<String?, Any?>
-    private val hashOps: HashOperations<String, Int, TempResultCandidate>
-
-    @Autowired
-    private val multipleAnswerRepo: MultipleAnswerRepo? = null
-
-    @Autowired
-    private val essayAnswerRepo: EssayAnswerRepository? = null
-
+    private val hashOps: HashOperations<String, String, TempResultCandidate>
 
     init {
-        valueOps = redisTemplate.opsForValue()
         hashOps = redisTemplate.opsForHash()
     }
 
-    fun saveMultipleAnswer(temp: TempResultCandidate) {
+    fun saveAnswer(temp: TempResultCandidate, idQuestion: Int, idCandidate: Int) {
         try {
-            var idQuestion: Int? = multipleAnswerRepo?.getById(temp.idAnswer!!)?.question!!.id
-            hashOps.put("ans",idQuestion!!,temp)
-        } catch (e: Exception) {
+            val keyGen = "$idQuestion:$idCandidate"
+            println(keyGen)
+            hashOps.put("ans",keyGen,temp)
+            println(idQuestion)
+        } catch (e: Exception)  {
             println("Ko tim thay cau tra loi")
         }
     }
 
-    fun saveEssayAnswer(temp: TempResultCandidate) {
-        try {
-            var idQuestion: Int? = essayAnswerRepo?.getById(temp.idAnswer!!)?.question!!.id
-            hashOps.put("ans",idQuestion!!,temp)
-        } catch (e: Exception) {
-            println("Ko tim thay cau tra loi")
+    fun deleteCandidateCacheAnswer(key: String, idCandidate: Int) {
+        val cacheAns = hashOps.entries(key)
+        val toRemove: MutableMap<String, TempResultCandidate> = mutableMapOf()
+        for (e in cacheAns) {
+            val thisKey = e.key
+            val str = thisKey.split(":")
+            if(str[1] == "$idCandidate") {
+                toRemove[thisKey] = e.value
+            }
         }
-    }
-
-    fun getHashCachAns(key: String) = hashOps.entries(key)
-    fun delete(key: String) {
+        cacheAns.entries.removeAll(toRemove.entries)
         hashOps.operations.delete(key)
+        hashOps.putAll("ans",cacheAns)
     }
 
-    fun cache(key:String,data: Any) {
-        valueOps.set(key,data,2,TimeUnit.HOURS)
-    }
-
-    fun getCachedValue(key: String): Any? = valueOps.get(key)
-
-    fun deleteCachedValue(key: String) {
-        valueOps.operations.delete(key)
+    fun getHashCachAns(key: String): Map<String, TempResultCandidate> = hashOps.entries(key)
+    fun deleteAll(key: String) {
+        hashOps.operations.delete(key)
     }
 }

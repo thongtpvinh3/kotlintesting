@@ -1,6 +1,5 @@
 package backend.kotlintesting.model
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import javax.persistence.*
 
 @Entity
@@ -20,7 +19,7 @@ data class Staff (
     @Column
     var email:String?,
     @Column
-    var department:String?,
+    var department:String? = "Blockchain Technology",
     @Column
     var avatar:String?
 ) : java.io.Serializable

@@ -1,18 +1,43 @@
 package backend.kotlintesting.service
 
-import backend.kotlintesting.model.Candidate
 import backend.kotlintesting.model.Staff
-import backend.kotlintesting.model.Test
-import backend.kotlintesting.repo.CandidateRepository
+import backend.kotlintesting.repo.CandiDisplayRepo
 import backend.kotlintesting.repo.StaffRepo
-import backend.kotlintesting.repo.TestRepo
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
-class AppService(val staffRepo: StaffRepo, val candidateRepo: CandidateRepository, val testRepo: TestRepo) {
+class AppService(val staffRepo: StaffRepo, val candiDisplayRepo: CandiDisplayRepo) {
+
+    // #################################################################
+    // #                             _`
+    // #                          _ooOoo_
+    // #                         o8888888o
+    // #                         88" . "88
+    // #                         (| -_- |)
+    // #                         O\  =  /O
+    // #                      ____/`---'\____
+    // #                    .'  \\|     |//  `.
+    // #                   /  \\|||  :  |||//  \
+    // #                  /  _||||| -:- |||||_  \
+    // #                  |   | \\\  -  /'| |   |
+    // #                  | \_|  `\`---'//  |_/ |
+    // #                  \  .-\__ `-. -'__/-.  /
+    // #                ___`. .'  /--.--\  `. .'___
+    // #             ."" '<  `.___\_<|>_/___.' _> \"".
+    // #            | | :  `- \`. ;`. _/; .'/ /  .' ; |
+    // #            \  \ `-.   \_\_`. _.'_/_/  -' _.' /
+    // #=============`-.`___`-.__\ \___  /__.-'_.'_.-'=================#
+    //                            `=--=-'
+    //           _.-/`)
+    //          // / / )
+    //       .=// / / / )
+    //      //`/ / / / /
+    //     // /     ` /
+    //    ||         /
+    //     \\       /
+    //      ))    .'
+    //     //    /
+    //          /
 
     fun findByUsernameAndPassword(username: String,password: String): Staff? = staffRepo.findByUsernameAndPassword(username,password)
     fun login(username:String,password:String) : Boolean {
@@ -24,12 +49,6 @@ class AppService(val staffRepo: StaffRepo, val candidateRepo: CandidateRepositor
         return false
     }
 
-    fun getJoinCandidate(idCandidate: Int) :Candidate? = candidateRepo.getById(idCandidate)
-    fun joinByIdCandidate(idCandidate: Int): Boolean {
-        if (candidateRepo.getById(idCandidate)!=null) {
-            return true
-        }
-        return false
-    }
+    fun getJoinCandidate(idCandidate: Int) = candiDisplayRepo.getById(idCandidate)
 
 }

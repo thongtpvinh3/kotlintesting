@@ -4,17 +4,16 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "candidate_test")
+@kotlinx.serialization.Serializable
 data class CandidateTest (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     var id: Int,
     @Column(name = "id_candidate")
-    var candidateId: Int?,
+    var candidateId: Int? = 0,
     @Column(name = "id_test")
-    var testId: Int?,
-    @Column(name = "marks", columnDefinition = "DOUBLE DEFAULT 0")
-    var marks: Double?,
-    @Column(name = "is_done", columnDefinition = "INT DEFAULT 0")
-    var isDone: Int
-) : java.io.Serializable
+    var testId: Int? = 0,
+    @Column(name = "marks")
+    var marks: Double = 0.0
+)

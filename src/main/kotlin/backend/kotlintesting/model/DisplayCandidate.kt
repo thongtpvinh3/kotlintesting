@@ -1,39 +1,37 @@
 package backend.kotlintesting.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import javax.persistence.*
-import kotlin.random.Random
 
 @Entity
 @Table(name = "candidate")
-data class Candidate (
+data class DisplayCandidate(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     var id:Int,
     @Column
+    var name:String,
+    @Column
     var avatar:String? = "",
     @Column
-    var name:String = "",
+    var level: Int,
     @Column
-    var level: Int? = -1,
-    @Column(unique = true)
-    var phone:String = "",
-    @Column(unique = true)
-    var email:String = "",
+    var phone:String,
     @Column
-    var position: String = "Blockchain Developer",
+    var email:String,
     @Column(name = "is_done")
     var isDone: Int = 0,
     @Column(name = "date_test", nullable = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    var dates: LocalDateTime? = LocalDateTime.now(),
+    var dates: LocalDateTime? = LocalDateTime.of(1999,12,14,0,0,0),
     @Column(name = "english_mark")
     var englishMark: Double? = 0.0,
     @Column(name = "coding_mark")
@@ -43,24 +41,12 @@ data class Candidate (
     @ManyToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
     @JoinTable(name = "candidate_test", joinColumns = [JoinColumn(name = "id_candidate")], inverseJoinColumns = [JoinColumn(name = "id_test")])
-    @JsonIgnoreProperties(*["hibernateLazyInitializer","handler"])
-    var tests: MutableSet<Test>? = null
-) : java.io.Serializable {
-
+    @JsonIgnore
+    var tests: MutableSet<Test>? = mutableSetOf()
+): java.io.Serializable {
     fun calculatedTotalTime(tests: MutableSet<Test>?): Int {
         var time = 0
-        for (i in this.tests!!) {
-            time+=i.timeToSecond()
-        }
+        for (i in this.tests!!) time+=i.timeToSecond()
         return time
-    }
-
-    fun generatedId(count: Int): String {
-        val r = Random
-        val x: Int = r.nextInt(1000,9999)
-        val prefix = "CD"
-        val newCount = count + 10
-        val suffix = x.toString()+newCount.toString()
-        return "$prefix$suffix"
     }
 }
